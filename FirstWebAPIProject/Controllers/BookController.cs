@@ -16,30 +16,30 @@ public class BookController : ControllerBase
 
 
 
-    [HttpGet]
-    public ActionResult<List<Book>> GetBooks() // endpoint
-    {
-        var books = new List<Book> { 
-            new Book()
-            {
-                Id = 1,
-                Title = "Test",
-                Description = "Test",
-                Pages = 44,
-                Price = 12
-            },
-            new Book()
-            {
-                Id = 2,
-                Title = "Test2",
-                Description = "Test2",
-                Pages = 55,
-                Price = 16
-            },
-        };
+    //[HttpGet]
+    //public ActionResult<List<Book>> GetBooks() // endpoint
+    //{
+    //    var books = new List<Book> { 
+    //        new Book()
+    //        {
+    //            Id = 1,
+    //            Title = "Test",
+    //            Description = "Test",
+    //            Pages = 44,
+    //            Price = 12
+    //        },
+    //        new Book()
+    //        {
+    //            Id = 2,
+    //            Title = "Test2",
+    //            Description = "Test2",
+    //            Pages = 55,
+    //            Price = 16
+    //        },
+    //    };
 
-        return Ok(books); // 200 status
-    }
+    //    return Ok(books); // 200 status
+    //}
 
     [HttpGet("{id}")]
     public ActionResult<Book> GetBookById([FromRoute] int id)
@@ -64,4 +64,60 @@ public class BookController : ControllerBase
 
         return Created($"/books/{book.Id}", book);
     }
+
+    [HttpDelete("{id}")]
+    public ActionResult<int> DeleteBook([FromRoute] int id)
+    {
+        // delete from database
+
+        return Ok(id);
+    }
+
+    [HttpPut]
+    public ActionResult<Book> UpdateBook([FromBody] Book book)
+    {
+        // update in database
+
+        return Ok(book);
+    }
+
+    [HttpPatch("{id}")]
+    public ActionResult<Book> UpdatePrice([FromRoute] int id, [FromBody] int price)
+    {
+        var book = new Book()
+        {
+            Id = id,
+            Title = "Test",
+            Description = "Test",
+            Pages = 44,
+            Price = price
+        };
+
+        return Ok(book);
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<Book>> GetBooksPaged([FromQuery] int skip, [FromQuery] int take)
+    {
+        var books = new List<Book>(capacity: 1000);
+        for (int i = 0; i < 1000; i++)
+        {
+            var book = new Book()
+            {
+                Id = i,
+                Title = $"Test {i}",
+                Description = "Test",
+                Pages = new Random().Next(50, 1999),
+                Price = new Random().Next(10, 999)
+            };
+            books.Add(book);
+        }
+
+        var pagesBooks = books
+            .Skip(skip)
+            .Take(take);
+
+        return Ok(pagesBooks);
+    }
+
 }
